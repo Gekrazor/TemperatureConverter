@@ -12,7 +12,7 @@ class MainViewController: UIViewController {
     private lazy var backgroundImageView: UIImageView = {
         let view = UIImageView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.image = UIImage(named: "normal")
+        view.image = UIImage(named: "cold")
         view.contentMode = .scaleAspectFill
         return view
     }()
@@ -29,7 +29,7 @@ class MainViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 24, weight: .regular)
-        label.text = "0°F"
+        label.text = "0ºC"
         return label
     }()
     
@@ -37,20 +37,49 @@ class MainViewController: UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 24, weight: .regular)
-        label.text = "32°F"
+        label.text = "32ºF"
         return label
     }()
     
     private lazy var tempSLider: UISlider = {
         let slider = UISlider()
         slider.translatesAutoresizingMaskIntoConstraints = false
-        slider.addTarget(self, action: #selector(scrolling), for: .allEditingEvents)
+        slider.addTarget(self, action: #selector(scrolling), for: .allTouchEvents)
+        slider.value = 0
+        slider.maximumValue = 50
+        slider.minimumValue = -50
         return slider
     }()
     
     @objc
     private func scrolling() {
+        let currentValue = round(tempSLider.value)
+        celcLabel.text = "\(currentValue)ºC"
+        farhLabel.text = "\(currentValue * 9 / 5 + 32)ºF"
         
+        if currentValue == 30 {
+            UIView.transition(with: backgroundImageView,
+                              duration: 0.4,
+                              options: .transitionCrossDissolve,
+                              animations: { self.backgroundImageView.image = UIImage(named: "hot") },
+                              completion: nil)
+        }
+        
+        if currentValue == 0 {
+            UIView.transition(with: backgroundImageView,
+                              duration: 0.4,
+                              options: .transitionCrossDissolve,
+                              animations: { self.backgroundImageView.image = UIImage(named: "cold") },
+                              completion: nil)
+        }
+        
+        if currentValue == 29 || currentValue == 1 {
+            UIView.transition(with: backgroundImageView,
+                              duration: 0.4,
+                              options: .transitionCrossDissolve,
+                              animations: { self.backgroundImageView.image = UIImage(named: "normal") },
+                              completion: nil)
+        }
     }
     
     override func viewDidLoad() {
